@@ -29,14 +29,29 @@ export const AccountTab: React.FC = () => {
       <div className="rounded-xl border border-border overflow-hidden mb-8">
         {/* Banner */}
         <div 
-          className="h-28 bg-gradient-to-r from-primary to-blue-500 relative group cursor-pointer"
+          className="h-28 bg-gradient-to-r from-primary to-blue-500 relative group cursor-pointer bg-cover bg-center"
+          style={user?.bannerUrl ? { backgroundImage: `url(${user.bannerUrl})` } : {}}
           onClick={() => {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/*';
             input.onchange = (e: any) => {
               if (e.target.files && e.target.files[0]) {
-                alert(`Upload do Banner: ${e.target.files[0].name}\n\n(Simulação concluída com sucesso!)`);
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                  if (ev.target?.result) {
+                    try {
+                      await useAuthStore.getState().updateProfile({ 
+                        username: user?.username, 
+                        email: user?.email, 
+                        bannerUrl: ev.target.result as string 
+                      });
+                    } catch (err) {
+                      alert('Erro ao fazer upload do banner.');
+                    }
+                  }
+                };
+                reader.readAsDataURL(e.target.files[0]);
               }
             };
             input.click();

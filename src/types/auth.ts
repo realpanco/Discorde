@@ -4,6 +4,8 @@ export interface User {
   displayName: string;
   email: string;
   avatarUrl?: string;
+  bannerUrl?: string;
+  pronouns?: string;
   status: 'online' | 'idle' | 'dnd' | 'offline';
   bio?: string;
   phone?: string;

@@ -128,7 +128,7 @@ app.get('/api/auth/me', requireAuth, (req, res) => {
 // =======================
 
 app.put('/api/settings/profile', requireAuth, (req, res) => {
-  const { displayName, username, pronouns, bio, nameFont, avatarUrl, email, phone } = req.body;
+  const { displayName, username, pronouns, bio, nameFont, avatarUrl, bannerUrl, email, phone } = req.body;
   
   try {
     // Basic validation
@@ -136,12 +136,31 @@ app.put('/api/settings/profile', requireAuth, (req, res) => {
 
     db.prepare(`
       UPDATE users 
-      SET display_name = ?, username = ?, pronouns = ?, bio = ?, name_font = ?, avatar_url = ?, email = ?, phone = ?
+      SET display_name = COALESCE(?, display_name), 
+          username = COALESCE(?, username), 
+          pronouns = COALESCE(?, pronouns), 
+          bio = COALESCE(?, bio), 
+          name_font = COALESCE(?, name_font), 
+          avatar_url = COALESCE(?, avatar_url), 
+          banner_url = COALESCE(?, banner_url), 
+          email = COALESCE(?, email), 
+          phone = COALESCE(?, phone)
       WHERE id = ?
-    `).run(displayName, username, pronouns, bio, nameFont, avatarUrl, email, phone, req.userId);
+    `).run(
+      displayName !== undefined ? displayName : null, 
+      username !== undefined ? username : null, 
+      pronouns !== undefined ? pronouns : null, 
+      bio !== undefined ? bio : null, 
+      nameFont !== undefined ? nameFont : null, 
+      avatarUrl !== undefined ? avatarUrl : null, 
+      bannerUrl !== undefined ? bannerUrl : null, 
+      email !== undefined ? email : null, 
+      phone !== undefined ? phone : null, 
+      req.userId
+    );
     
     // Fetch updated user
-    const updatedUser = db.prepare('SELECT id, username, email, display_name as displayName, phone, avatar_url as avatarUrl FROM users WHERE id = ?').get(req.userId);
+    const updatedUser = db.prepare('SELECT id, username, email, display_name as displayName, phone, avatar_url as avatarUrl, banner_url as bannerUrl, bio FROM users WHERE id = ?').get(req.userId);
     
     res.json({ success: true, user: updatedUser });
   } catch (err) {
@@ -452,6 +471,10 @@ io.on('connection', (socket) => {
         id: Date.now().toString(),
         userId: user.id,
         username: user.displayName || user.username,
+        avatarUrl: user.avatarUrl,
+        bannerUrl: user.bannerUrl,
+        bio: user.bio,
+        pronouns: user.pronouns,
         content: data.content,
         timestamp: Date.now()
       };

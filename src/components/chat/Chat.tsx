@@ -6,12 +6,16 @@ import { useAuthStore } from '../../stores/useAuthStore';
 import { socketService } from '../../services/SocketService';
 import { useSettingsStore } from '../../stores/useSettingsStore';
 import { useTranslation } from '../providers/I18nProvider';
+import { ProfilePreviewModal } from '../profile/ProfilePreviewModal';
 
 interface Message {
   id: string;
   userId: string;
   username: string;
-  avatar?: string;
+  avatarUrl?: string;
+  bannerUrl?: string;
+  bio?: string;
+  pronouns?: string;
   content: string;
   timestamp: number;
   attachment?: {
@@ -29,6 +33,7 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
   const [msgToDelete, setMsgToDelete] = useState<string | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [pendingAttachment, setPendingAttachment] = useState<{ type: string; data: string; name: string } | null>(null);
+  const [previewUser, setPreviewUser] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const user = useAuthStore(state => state.user);
@@ -171,8 +176,8 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
               )}
             >
               {!isConsecutive && !isCompact && showAvatars ? (
-                <div className="mt-0.5 shrink-0">
-                  <Avatar size="md" alt={msg.username} />
+                <div className="mt-0.5 shrink-0 cursor-pointer" onClick={() => setPreviewUser(msg)}>
+                  <Avatar size="md" alt={msg.username} src={msg.avatarUrl} />
                 </div>
               ) : (
                 <div className="w-10 shrink-0 opacity-0 group-hover:opacity-100 flex items-center justify-center">
@@ -185,7 +190,12 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
               <div className="flex flex-col min-w-0 flex-1">
                 {(!isConsecutive || isCompact) && (
                   <div className="flex items-baseline gap-2">
-                    <span className="font-medium text-text hover:underline cursor-pointer">{msg.username}</span>
+                    <span 
+                      className="font-medium text-text hover:underline cursor-pointer"
+                      onClick={() => setPreviewUser(msg)}
+                    >
+                      {msg.username}
+                    </span>
                     <span className="text-xs text-text-muted">
                       {formatDate(msg.timestamp)}
                     </span>
@@ -395,6 +405,22 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
           )}
         </div>
       </div>
+
+      {previewUser && (
+        <ProfilePreviewModal 
+          user={{
+            id: previewUser.userId,
+            username: previewUser.username,
+            displayName: previewUser.username,
+            avatarUrl: previewUser.avatarUrl,
+            bannerUrl: previewUser.bannerUrl,
+            bio: previewUser.bio,
+            pronouns: previewUser.pronouns
+          }} 
+          onClose={() => setPreviewUser(null)} 
+          isSelf={previewUser.userId === user?.id}
+        />
+      )}
     </div>
   );
 };

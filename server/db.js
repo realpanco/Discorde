@@ -28,9 +28,12 @@ const initDb = () => {
     );
   `);
 
-  // Add phone column if it doesn't exist (for existing DBs)
+  // Add phone and banner columns if they don't exist (for existing DBs)
   try {
     db.exec('ALTER TABLE users ADD COLUMN phone TEXT');
+  } catch (e) {}
+  try {
+    db.exec('ALTER TABLE users ADD COLUMN banner_url TEXT');
   } catch (e) {}
 
   // Sessions table
