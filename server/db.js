@@ -89,6 +89,20 @@ const initDb = () => {
     );
   `);
 
+  // Call logs table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS call_logs (
+      id TEXT PRIMARY KEY,
+      caller_id TEXT NOT NULL,
+      receiver_id TEXT,
+      room_id TEXT NOT NULL,
+      status TEXT DEFAULT 'completed',
+      duration INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (caller_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+  `);
+
   console.log('Database initialized successfully.');
 };
 

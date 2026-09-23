@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
 import { Settings as SettingsIcon, Maximize2, LogOut, Mic, MicOff, Video as VideoIcon, VideoOff, MonitorUp, MessageSquare } from 'lucide-react';
@@ -18,6 +18,21 @@ export const RoomView: React.FC = () => {
   const [isVideoOn, setIsVideoOn] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(true);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
+  useEffect(() => {
+    if (roomId) {
+      import('../../services/AuthService').then(({ authService }) => {
+        fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/calls`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${authService.getToken()}`
+          },
+          body: JSON.stringify({ roomId })
+        }).catch(() => {});
+      });
+    }
+  }, [roomId]);
 
   // Initialize WebRTC connection for the room
   const { peers, localStream, isScreenSharing, toggleScreenShare } = useWebRTC(roomId || 'default', isVideoOn, isMicOn);

@@ -197,6 +197,34 @@ app.put('/api/settings/profile', requireAuth, (req, res) => {
     }
   });
 
+  app.get('/api/calls', requireAuth, (req, res) => {
+    try {
+      const calls = db.prepare(`
+        SELECT c.id, c.room_id as roomId, c.status, c.duration, c.created_at as createdAt,
+               u.id as callerId, u.username as callerUsername, u.display_name as callerName, u.avatar_url as callerAvatar
+        FROM call_logs c
+        JOIN users u ON c.caller_id = u.id
+        WHERE c.caller_id = ? OR c.receiver_id = ?
+        ORDER BY c.created_at DESC
+        LIMIT 50
+      `).all(req.userId, req.userId);
+      res.json(calls);
+    } catch (e) {
+      res.status(500).json({ error: 'Failed to fetch calls' });
+    }
+  });
+
+  app.post('/api/calls', requireAuth, (req, res) => {
+    try {
+      const { roomId, receiverId } = req.body;
+      const id = Date.now().toString();
+      db.prepare('INSERT INTO call_logs (id, caller_id, receiver_id, room_id) VALUES (?, ?, ?, ?)').run(id, req.userId, receiverId || null, roomId);
+      res.json({ success: true, callId: id });
+    } catch (e) {
+      res.status(500).json({ error: 'Failed to log call' });
+    }
+  });
+
 app.delete('/api/users/me', requireAuth, (req, res) => {
   try {
     // Delete settings, sessions, friends, and the user
