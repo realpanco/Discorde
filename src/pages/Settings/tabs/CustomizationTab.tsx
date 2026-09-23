@@ -5,6 +5,7 @@ import { SettingRow } from '../components/SettingRow';
 import { Button } from '../../../components/ui/Button/Button';
 import { useSettingsStore } from '../../../stores/useSettingsStore';
 import { EditProfileModal } from '../modals/EditProfileModal';
+import { useAuthStore } from '../../../stores/useAuthStore';
 
 export const CustomizationTab: React.FC = () => {
   const [showStatus, setShowStatus] = useState(false);

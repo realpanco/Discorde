@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 export interface SettingRowProps {
-  label: string;
+  label: React.ReactNode;
   description?: string;
   children: React.ReactNode;
   danger?: boolean;

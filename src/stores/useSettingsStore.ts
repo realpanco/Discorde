@@ -13,6 +13,7 @@ interface SettingsState {
   compactMode: boolean;
   showAvatars: boolean;
   chatLayout: 'cozy' | 'compact';
+  chatBackground: string;
 
   // --- Notifications ---
   notificationsEnabled: boolean;
@@ -46,7 +47,7 @@ interface SettingsState {
   pushToTalkKey: string;
   audioQuality: 'low' | 'medium' | 'high';
   videoQuality: 'auto' | '360p' | '480p' | '720p' | '1080p';
-  cameraFps: '15' | '30' | '60';
+  cameraFps: 'auto' | '15' | '30' | '60';
   maxResolution: '480p' | '720p' | '1080p' | '1440p' | '4k';
   backgroundBlur: boolean;
   virtualCamera: boolean;
@@ -66,8 +67,10 @@ interface SettingsState {
   // --- Chats ---
   enterSendsMessage: boolean;
   showDeleteConfirmation: boolean;
+  deleteConfirm: boolean;
   editMessages: boolean;
   linkPreview: boolean;
+  linkPreviews: boolean;
   autoplayVideos: boolean;
   autoplayGifs: boolean;
   autoDownload: boolean;
@@ -138,6 +141,7 @@ const defaultSettings: Omit<SettingsState, 'setSetting' | 'loadSettings' | 'rese
   compactMode: false,
   showAvatars: true,
   chatLayout: 'cozy',
+  chatBackground: '',
 
   // Notifications
   notificationsEnabled: true,
@@ -191,8 +195,10 @@ const defaultSettings: Omit<SettingsState, 'setSetting' | 'loadSettings' | 'rese
   // Chats
   enterSendsMessage: true,
   showDeleteConfirmation: true,
+  deleteConfirm: true,
   editMessages: true,
   linkPreview: true,
+  linkPreviews: true,
   autoplayVideos: true,
   autoplayGifs: true,
   autoDownload: true,
@@ -251,7 +257,7 @@ import { settingsService } from '../services/SettingsService';
 const categoryMap: Record<string, string> = {
   theme: 'appearance', accentColor: 'appearance', fontSize: 'appearance', interfaceScale: 'appearance',
   interfaceDensity: 'appearance', animations: 'appearance', visualEffects: 'appearance', 
-  transparency: 'appearance', compactMode: 'appearance', showAvatars: 'appearance', chatLayout: 'appearance',
+  transparency: 'appearance', compactMode: 'appearance', showAvatars: 'appearance', chatLayout: 'appearance', chatBackground: 'appearance',
   
   notificationsEnabled: 'notification', messageNotifications: 'notification', dmNotifications: 'notification',
   mentionNotifications: 'notification', friendRequestNotifications: 'notification', incomingCallNotifications: 'notification',
@@ -269,7 +275,7 @@ const categoryMap: Record<string, string> = {
   whoCanSeeStatus: 'privacy', whoCanSeeOnline: 'privacy', showLastOnline: 'privacy', readReceipts: 'privacy',
   typingIndicator: 'privacy', hideActivity: 'privacy',
 
-  enterSendsMessage: 'chat', showDeleteConfirmation: 'chat', editMessages: 'chat', linkPreview: 'chat',
+  enterSendsMessage: 'chat', showDeleteConfirmation: 'chat', deleteConfirm: 'chat', editMessages: 'chat', linkPreview: 'chat', linkPreviews: 'chat',
   autoplayVideos: 'chat', autoplayGifs: 'chat', autoDownload: 'chat', mediaQuality: 'chat', compressImages: 'chat',
   openLinksExternally: 'chat',
 
@@ -291,7 +297,7 @@ const categoryMap: Record<string, string> = {
 };
 
 // Debounce timer map
-const debounceMap = new Map<string, NodeJS.Timeout>();
+const debounceMap = new Map<string, ReturnType<typeof setTimeout>>();
 
 export const useSettingsStore = create<SettingsState>((set, get) => ({
   ...defaultSettings,

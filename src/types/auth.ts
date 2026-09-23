@@ -6,6 +6,7 @@ export interface User {
   avatarUrl?: string;
   status: 'online' | 'idle' | 'dnd' | 'offline';
   bio?: string;
+  phone?: string;
   createdAt: number;
 }
 

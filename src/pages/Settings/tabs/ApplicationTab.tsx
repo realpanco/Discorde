@@ -1,5 +1,7 @@
 import React from 'react';
 import { SettingSection } from '../components/SettingSection';
+
+declare const process: any;
 import { SettingRow } from '../components/SettingRow';
 import { Switch } from '../../../components/ui/Switch/Switch';
 import { Button } from '../../../components/ui/Button/Button';
