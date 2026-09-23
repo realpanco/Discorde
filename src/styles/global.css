@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #09090b;
+  --color-surface: #18181b;
+  --color-surface-hover: #27272a;
+  --color-primary: #6366f1;
+  --color-primary-hover: #4f46e5;
+  --color-secondary: #27272a;
+  --color-secondary-hover: #3f3f46;
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-success: #22c55e;
+  --color-text: #f4f4f5;
+  --color-text-muted: #a1a1aa;
+  --color-border: #27272a;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --animate-pulse-slow: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  /* Dynamic font sizes based on font scale */
+  --text-xs: calc(0.75rem * var(--font-scale, 1));
+  --text-sm: calc(0.875rem * var(--font-scale, 1));
+  --text-base: calc(1rem * var(--font-scale, 1));
+  --text-lg: calc(1.125rem * var(--font-scale, 1));
+  --text-xl: calc(1.25rem * var(--font-scale, 1));
+  --text-2xl: calc(1.5rem * var(--font-scale, 1));
+  --text-3xl: calc(1.875rem * var(--font-scale, 1));
+  
+  /* Dynamic spacing based on density scale */
+  --spacing-1: calc(0.25rem * var(--spacing-scale, 1));
+  --spacing-2: calc(0.5rem * var(--spacing-scale, 1));
+  --spacing-3: calc(0.75rem * var(--spacing-scale, 1));
+  --spacing-4: calc(1rem * var(--spacing-scale, 1));
+  --spacing-5: calc(1.25rem * var(--spacing-scale, 1));
+  --spacing-6: calc(1.5rem * var(--spacing-scale, 1));
+  --spacing-8: calc(2rem * var(--spacing-scale, 1));
+}
+
+:root {
+  /* Dynamic values mapped by ThemeProvider */
+  --font-size-base: 14px;
+  --font-scale: 1;
+  --spacing-scale: 1;
+  --interface-scale: 1;
+  --transition-duration: 150ms;
+  
+  /* Dark Theme (Default) */
+  --color-background: #09090b;
+  --color-surface: #18181b;
+  --color-surface-hover: #27272a;
+  --color-text: #f4f4f5;
+  --color-text-muted: #a1a1aa;
+  --color-border: #27272a;
+}
+
+:root.light {
+  --color-background: #ffffff;
+  --color-surface: #f4f4f5;
+  --color-surface-hover: #e4e4e7;
+  --color-text: #09090b;
+  --color-text-muted: #52525b;
+  --color-border: #e4e4e7;
+}
+
+:root.high-contrast {
+  --color-text: #ffffff;
+  --color-text-muted: #e4e4e7;
+  --color-border: #ffffff;
+}
+
+:root.light.high-contrast {
+  --color-text: #000000;
+  --color-text-muted: #18181b;
+  --color-border: #000000;
+}
+
+:root.no-transparency {
+  --glass-bg: var(--color-surface);
+  --glass-border: var(--color-border);
+  backdrop-filter: none !important;
+}
+
+/* Developer Mode */
+.dev-mode * {
+  outline: 1px dashed rgba(255, 0, 0, 0.1);
+}
+.dev-mode *:hover {
+  outline: 1px solid red !important;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--font-size-base);
+    zoom: var(--interface-scale, 1);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    min-height: 100vh;
+    transition: background-color var(--transition-duration) ease, color var(--transition-duration) ease;
+  }
+  
+  * {
+    transition: background-color var(--transition-duration) ease, border-color var(--transition-duration) ease, color var(--transition-duration) ease, opacity var(--transition-duration) ease, transform var(--transition-duration) ease;
+  }
+
+  /* Slider / Range Input */
+  .slider-input::-webkit-slider-runnable-track {
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(
+      to right,
+      var(--color-primary) 0%,
+      var(--color-primary) var(--slider-fill, 50%),
+      var(--color-border) var(--slider-fill, 50%),
+      var(--color-border) 100%
+    );
+  }
+
+  .slider-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: white;
+    margin-top: -5px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s;
+  }
+
+  .slider-input::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+  }
+
+  .slider-input::-moz-range-track {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-border);
+  }
+
+  .slider-input::-moz-range-progress {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--color-primary);
+  }
+
+  .slider-input::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+}

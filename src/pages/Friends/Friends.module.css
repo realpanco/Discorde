@@ -1,0 +1,190 @@
+.container {
+  display: flex;
+  height: 100%;
+}
+
+.sidebar {
+  width: 280px;
+  background-color: var(--color-bg-elevated);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebarHeader {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dmList {
+  padding: var(--spacing-4);
+  overflow-y: auto;
+}
+
+.listTitle {
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-3);
+  letter-spacing: 0.05em;
+}
+
+.dmItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  padding: var(--spacing-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.dmItem:hover {
+  background-color: var(--color-bg-surface-hover);
+}
+
+.dmName {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.dmItem:hover .dmName {
+  color: var(--color-text-primary);
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-base);
+}
+
+.header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--spacing-6);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tabs {
+  display: flex;
+  gap: var(--spacing-4);
+}
+
+.tab {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  padding: var(--spacing-2) var(--spacing-1);
+  position: relative;
+}
+
+.tab:hover {
+  color: var(--color-text-primary);
+}
+
+.tab.active {
+  color: var(--color-text-primary);
+}
+
+.tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--color-brand-primary);
+  border-radius: 2px;
+}
+
+.content {
+  padding: var(--spacing-6);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.searchWrapper {
+  margin-bottom: var(--spacing-6);
+  max-width: 600px;
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.friendsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.friendRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  border-top: 1px solid transparent;
+  transition: all var(--transition-fast);
+}
+
+.friendRow:hover {
+  background-color: var(--color-bg-surface-hover);
+  border-color: var(--border-color-light);
+}
+
+.friendRow:not(:last-child) {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.friendRow:hover:not(:last-child) {
+  border-bottom-color: transparent;
+}
+
+.friendInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-4);
+}
+
+.friendDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.friendName {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-primary);
+  margin-bottom: 2px;
+}
+
+.friendStatusText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.friendActions {
+  display: flex;
+  gap: var(--spacing-2);
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+}
+
+.friendRow:hover .friendActions {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none; /* Hide DM sidebar on mobile for now */
+  }
+}
