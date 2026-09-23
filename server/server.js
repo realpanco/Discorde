@@ -537,13 +537,20 @@ io.on('connection', (socket) => {
 });
 
 // SPA Catch-all route for React Router
+const fs = require('fs');
 app.use((req, res, next) => {
   if (req.method === 'GET') {
-    res.sendFile(path.join(distPath, 'index.html'));
+    const indexPath = path.join(distPath, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      res.sendFile(indexPath);
+    } else {
+      res.status(200).send('Discorde API is running! (Frontend is not built here)');
+    }
   } else {
     next();
   }
 });
+
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
