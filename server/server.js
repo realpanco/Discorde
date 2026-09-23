@@ -171,6 +171,32 @@ app.put('/api/settings/profile', requireAuth, (req, res) => {
   }
 });
 
+  app.get('/api/friends', requireAuth, (req, res) => {
+    try {
+      const friends = db.prepare(`
+        SELECT u.id, u.username, u.display_name as displayName, u.avatar_url as avatarUrl, u.status 
+        FROM friends f 
+        JOIN users u ON f.friend_id = u.id 
+        WHERE f.user_id = ?
+      `).all(req.userId);
+      res.json(friends);
+    } catch (e) {
+      res.status(500).json({ error: 'Failed to fetch friends' });
+    }
+  });
+
+  app.post('/api/friends', requireAuth, (req, res) => {
+    try {
+      const { friendId } = req.body;
+      if (!friendId || friendId === req.userId) return res.status(400).json({ error: 'Invalid friend ID' });
+      db.prepare('INSERT OR IGNORE INTO friends (user_id, friend_id) VALUES (?, ?)').run(req.userId, friendId);
+      db.prepare('INSERT OR IGNORE INTO friends (user_id, friend_id) VALUES (?, ?)').run(friendId, req.userId);
+      res.json({ success: true });
+    } catch (e) {
+      res.status(500).json({ error: 'Failed to add friend' });
+    }
+  });
+
 app.delete('/api/users/me', requireAuth, (req, res) => {
   try {
     // Delete settings, sessions, friends, and the user

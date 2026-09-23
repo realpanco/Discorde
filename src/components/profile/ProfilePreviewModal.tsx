@@ -68,7 +68,24 @@ export const ProfilePreviewModal: React.FC<ProfilePreviewModalProps> = ({
                 variant="primary" 
                 className="flex-1" 
                 leftIcon={<UserPlus size={18} />}
-                onClick={onAddFriend}
+                onClick={async () => {
+                  try {
+                    const { authService } = await import('../../services/AuthService');
+                    const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/friends`, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${authService.getToken()}`
+                      },
+                      body: JSON.stringify({ friendId: user.id })
+                    });
+                    if (res.ok) alert('Amigo adicionado!');
+                    else alert('Erro ao adicionar amigo');
+                  } catch(e) {
+                    alert('Erro de conexão');
+                  }
+                  if (onAddFriend) onAddFriend();
+                }}
               >
                 Adicionar
               </Button>
@@ -76,7 +93,12 @@ export const ProfilePreviewModal: React.FC<ProfilePreviewModalProps> = ({
                 variant="secondary" 
                 className="flex-1" 
                 leftIcon={<MessageSquare size={18} />}
-                onClick={onMessage}
+                onClick={() => {
+                  if (onMessage) onMessage();
+                  else {
+                    window.location.href = `/messages`;
+                  }
+                }}
               >
                 Mensagem
               </Button>
