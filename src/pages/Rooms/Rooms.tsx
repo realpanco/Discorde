@@ -22,7 +22,7 @@ export const Rooms: React.FC = () => {
     const fetchRooms = async () => {
       try {
         const token = authService.getToken();
-        const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/rooms`, {
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/rooms`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {
@@ -44,7 +44,7 @@ export const Rooms: React.FC = () => {
     
     try {
       const token = authService.getToken();
-      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/rooms`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/rooms`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

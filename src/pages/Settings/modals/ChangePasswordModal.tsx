@@ -33,7 +33,7 @@ export const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ onClos
 
     try {
       const token = authService.getToken();
-      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/settings/account`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/settings/account`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

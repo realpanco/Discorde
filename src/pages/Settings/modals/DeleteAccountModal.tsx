@@ -33,7 +33,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
       const user = useAuthStore.getState().user;
       if (!user) return;
       
-      const loginRes = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/login`, {
+      const loginRes = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user.email, password })
@@ -47,7 +47,7 @@ export const DeleteAccountModal: React.FC<DeleteAccountModalProps> = ({ onClose 
 
       // Password is correct, proceed with deletion
       const token = authService.getToken();
-      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/users/me`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/users/me`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
