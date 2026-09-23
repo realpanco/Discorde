@@ -455,6 +455,9 @@ io.on('connection', (socket) => {
         content: data.content,
         timestamp: Date.now()
       };
+      if (data.attachment) {
+        message.attachment = data.attachment;
+      }
       io.to(user.roomId).emit('chat-message', message);
     }
   });

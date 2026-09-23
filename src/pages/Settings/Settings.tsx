@@ -80,7 +80,11 @@ const navSections: NavSection[] = [
 // Flat list of all items for search
 const allItems = navSections.flatMap((s) => s.items);
 
-export const Settings: React.FC = () => {
+export interface SettingsProps {
+  onClose?: () => void;
+}
+
+export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
   const [activeTab, setActiveTab] = useState('account');
   const [search, setSearch] = useState('');
   const logout = useAuthStore((s) => s.logout);
@@ -173,6 +177,16 @@ export const Settings: React.FC = () => {
 
       {/* Main Content */}
       <main className={styles.main}>
+        {onClose && (
+          <div className="absolute right-8 top-8 z-50">
+            <button 
+              onClick={onClose}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-surface-hover text-text-muted hover:text-text transition-colors"
+            >
+              <X size={20} />
+            </button>
+          </div>
+        )}
         <div className={styles.content}>
           <ActiveComponent />
         </div>

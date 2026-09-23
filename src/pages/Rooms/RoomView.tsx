@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import classNames from 'classnames';
-import { LogOut, Mic, MicOff, Video as VideoIcon, VideoOff, MonitorUp, Settings, MessageSquare, Maximize2 } from 'lucide-react';
+import { Settings as SettingsIcon, Maximize2, LogOut, Mic, MicOff, Video as VideoIcon, VideoOff, MonitorUp, MessageSquare } from 'lucide-react';
 import { Chat } from '../../components/chat/Chat';
 import { Button } from '../../components/ui/Button/Button';
 import { useWebRTC } from '../../hooks/useWebRTC';
 import { ParticipantView } from '../../components/calls/ParticipantView';
 import { useAuthStore } from '../../stores/useAuthStore';
+import { Settings as SettingsModal } from '../Settings/Settings';
 
 export const RoomView: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
@@ -16,9 +17,19 @@ export const RoomView: React.FC = () => {
   const [isMicOn, setIsMicOn] = useState(false);
   const [isVideoOn, setIsVideoOn] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(true);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Initialize WebRTC connection for the room
   const { peers, localStream, isScreenSharing, toggleScreenShare } = useWebRTC(roomId || 'default', isVideoOn, isMicOn);
+  const handleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  };
 
   return (
     <div className="flex h-full w-full overflow-hidden bg-background">
@@ -30,7 +41,7 @@ export const RoomView: React.FC = () => {
             <h2 className="text-sm font-bold tracking-wider text-text">Room: {roomId || 'Nexus Core'}</h2>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="icon" variant="ghost" className="bg-surface-hover/50 backdrop-blur-md"><Maximize2 size={20} /></Button>
+            <Button size="icon" variant="ghost" className="bg-surface-hover/50 backdrop-blur-md" onClick={handleFullscreen}><Maximize2 size={20} /></Button>
             <Button 
               size="icon" 
               variant={isChatOpen ? 'primary' : 'ghost'} 
@@ -103,12 +114,21 @@ export const RoomView: React.FC = () => {
           </div>
           <div className="h-8 w-px bg-border" />
           <div className="flex items-center gap-4">
-            <button className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-hover text-text transition-colors hover:bg-surface-hover/80">
-              <Settings size={24} />
+            <button 
+              className="flex h-12 w-12 items-center justify-center rounded-xl bg-surface-hover text-text transition-colors hover:bg-surface-hover/80"
+              onClick={() => setIsSettingsOpen(true)}
+            >
+              <SettingsIcon size={24} />
             </button>
           </div>
         </div>
       </div>
+
+      {isSettingsOpen && (
+        <div className="absolute inset-0 z-[100] bg-background">
+          <SettingsModal onClose={() => setIsSettingsOpen(false)} />
+        </div>
+      )}
 
       {/* Chat Sidebar */}
       {isChatOpen && (

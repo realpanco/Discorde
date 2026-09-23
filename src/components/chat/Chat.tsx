@@ -14,6 +14,11 @@ interface Message {
   avatar?: string;
   content: string;
   timestamp: number;
+  attachment?: {
+    type: string;
+    data: string;
+    name: string;
+  };
 }
 
 export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, roomName }) => {
@@ -23,6 +28,7 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
   const [editContent, setEditContent] = useState('');
   const [msgToDelete, setMsgToDelete] = useState<string | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [pendingAttachment, setPendingAttachment] = useState<{ type: string; data: string; name: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const user = useAuthStore(state => state.user);
@@ -59,10 +65,11 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !user) return;
+    if ((!newMessage.trim() && !pendingAttachment) || !user) return;
 
-    socketService.sendMessage(newMessage);
+    socketService.sendMessage(newMessage, pendingAttachment || undefined);
     setNewMessage('');
+    setPendingAttachment(null);
   };
 
   const handleSaveEdit = (msgId: string) => {
@@ -205,7 +212,36 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
                   </div>
                 ) : (
                   <div className="text-text break-words leading-relaxed">
-                    {renderContentWithLinks(msg.content)}
+                    {msg.content && renderContentWithLinks(msg.content)}
+                    {msg.attachment && msg.attachment.type.startsWith('image/') && (
+                      <div className="mt-2 relative group max-w-sm">
+                        <img 
+                          src={msg.attachment.data} 
+                          alt={msg.attachment.name} 
+                          className="rounded-lg max-h-64 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => {
+                            const newTab = window.open();
+                            if (newTab) {
+                              newTab.document.write(`<img src="${msg.attachment!.data}" alt="${msg.attachment!.name}" style="max-width:100%;" />`);
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                    {msg.attachment && !msg.attachment.type.startsWith('image/') && (
+                      <div className="mt-2 p-3 bg-surface-hover rounded-lg flex items-center gap-3 border border-border">
+                        <div className="p-2 bg-surface rounded">
+                          <Settings size={20} className="text-text-muted" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">{msg.attachment.name}</span>
+                          <span className="text-xs text-text-muted">Anexo</span>
+                        </div>
+                        <button className="ml-auto p-2 hover:bg-surface rounded text-primary">
+                          Download
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -260,9 +296,27 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
             ref={fileInputRef} 
             className="hidden" 
             onChange={(e) => {
-              if (e.target.files && e.target.files[0]) {
-                // In a real app, upload the file here
-                setNewMessage(prev => prev + ` [Anexo: ${e.target.files![0].name}] `);
+              const file = e.target.files?.[0];
+              if (file) {
+                // Ensure file is smaller than 2MB to not blow up socket
+                if (file.size > 2 * 1024 * 1024) {
+                  alert("Arquivo muito grande! Máximo: 2MB");
+                  return;
+                }
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                  if (ev.target?.result) {
+                    setPendingAttachment({
+                      type: file.type,
+                      name: file.name,
+                      data: ev.target.result as string
+                    });
+                  }
+                };
+                reader.readAsDataURL(file);
+              }
+              if (fileInputRef.current) {
+                fileInputRef.current.value = '';
               }
             }} 
           />
@@ -273,6 +327,20 @@ export const Chat: React.FC<{ roomId: string; roomName: string }> = ({ roomId, r
           >
             <PlusCircle size={24} />
           </button>
+          {pendingAttachment && (
+            <div className="flex items-center gap-2 bg-background px-3 py-1.5 rounded-lg border border-border">
+              <span className="text-xs truncate max-w-[100px]" title={pendingAttachment.name}>
+                {pendingAttachment.name}
+              </span>
+              <button 
+                type="button" 
+                onClick={() => setPendingAttachment(null)} 
+                className="text-text-muted hover:text-danger"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          )}
           <textarea
             className="flex-1 bg-transparent px-2 text-text placeholder:text-text-muted focus:outline-none resize-none max-h-32 min-h-[24px]"
             placeholder={`Message #${roomName}`}

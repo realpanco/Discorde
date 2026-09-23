@@ -29,9 +29,9 @@ class SocketService {
     }
   }
 
-  sendMessage(content: string) {
+  sendMessage(content: string, attachment?: { type: string; data: string; name: string }) {
     if (this.socket) {
-      this.socket.emit('send-message', { content });
+      this.socket.emit('send-message', { content, attachment });
     }
   }
 
