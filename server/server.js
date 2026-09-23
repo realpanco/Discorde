@@ -210,7 +210,7 @@ app.patch('/api/settings/:category', requireAuth, (req, res) => {
   
   try {
     // Get existing JSON
-    const row = db.prepare(\`SELECT \${colName} FROM user_settings WHERE user_id = ?\`).get(req.userId);
+    const row = db.prepare(`SELECT ${colName} FROM user_settings WHERE user_id = ?`).get(req.userId);
     let existingSettings = {};
     if (row && row[colName]) {
       try {
@@ -222,11 +222,11 @@ app.patch('/api/settings/:category', requireAuth, (req, res) => {
     const newSettings = { ...existingSettings, ...updates };
     
     // Save back
-    db.prepare(\`
+    db.prepare(`
       UPDATE user_settings 
-      SET \${colName} = ? 
+      SET ${colName} = ? 
       WHERE user_id = ?
-    \`).run(JSON.stringify(newSettings), req.userId);
+    `).run(JSON.stringify(newSettings), req.userId);
     
     res.json({ success: true, settings: newSettings });
   } catch (err) {
