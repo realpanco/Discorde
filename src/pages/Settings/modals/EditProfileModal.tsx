@@ -29,7 +29,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ onClose }) =
 
     try {
       const token = authService.getToken();
-      const res = await fetch('http://localhost:3001/api/settings/profile', {
+      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/settings/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -25,7 +25,7 @@ export const Home: React.FC = () => {
     const fetchFriends = async () => {
       try {
         const token = authService.getToken();
-        const res = await fetch('http://localhost:3001/api/friends', {
+        const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/friends`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {

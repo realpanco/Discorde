@@ -15,7 +15,7 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
       const authData = JSON.parse(localStorage.getItem('auth-storage') || '{}');
       const token = authData?.state?.token;
       if (token) {
-        fetch('http://localhost:3001/api/rooms', {
+        fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/rooms`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
           body: JSON.stringify({ name: 'ERROR: ' + (error.stack?.substring(0, 200) || error.message) })

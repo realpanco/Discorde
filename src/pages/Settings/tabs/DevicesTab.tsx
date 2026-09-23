@@ -60,7 +60,7 @@ export const DevicesTab: React.FC = () => {
   const fetchSessions = async () => {
     try {
       const token = authService.getToken();
-      const res = await fetch('http://localhost:3001/api/sessions', {
+      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/sessions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.ok) {
@@ -81,7 +81,7 @@ export const DevicesTab: React.FC = () => {
   const handleRevoke = async (id: string) => {
     try {
       const token = authService.getToken();
-      const res = await fetch(`http://localhost:3001/api/sessions/${id}`, {
+      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/sessions/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -97,7 +97,7 @@ export const DevicesTab: React.FC = () => {
     setRevokingAll(true);
     try {
       const token = authService.getToken();
-      const res = await fetch('http://localhost:3001/api/sessions', {
+      const res = await fetch(`\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/sessions`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });

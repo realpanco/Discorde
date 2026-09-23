@@ -3,7 +3,7 @@ import { authService } from './AuthService';
 
 class SocketService {
   private socket: Socket | null = null;
-  private baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+  private baseURL = import.meta.env.VITE_API_URL || `\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}`;
 
   connect() {
     const token = authService.getToken();

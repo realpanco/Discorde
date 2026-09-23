@@ -1,6 +1,6 @@
 import type { User } from '../types/auth';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const BASE_URL = import.meta.env.VITE_API_URL || `\${import.meta.env.VITE_API_URL || 'http://localhost:3001'}`;
 const API_URL = `${BASE_URL}/api/auth`;
 
 class AuthService {
